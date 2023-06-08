@@ -36,7 +36,6 @@ public class MainViewController implements Initializable {
     public Button floofButton;
 
     private boolean zipMode = true;
-    private String zip = "Zip";
     private String unzip = "Unzip";
 
     @Override
@@ -44,7 +43,7 @@ public class MainViewController implements Initializable {
 
         loadBackGroundImage();
         setButtonsAndTextFields();
-        makeTextFieldsDraggable();
+        setTextFieldListeners();
     }
 
     private void setButtonsAndTextFields() {
@@ -63,7 +62,15 @@ public class MainViewController implements Initializable {
         }
     }
 
-    private void makeTextFieldsDraggable() {
+    private void setTextFieldListeners() {
+
+        Consumer<TextField> setCursor = field -> {
+            field.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    field.positionCaret(field.getText().length());
+                }
+            });
+        };
 
         Consumer<TextField> makeTextFieldsDraggable = field -> {
             field.setOnDragOver(event -> {
@@ -86,11 +93,35 @@ public class MainViewController implements Initializable {
 
         makeTextFieldsDraggable.accept(fileToZipField);
         makeTextFieldsDraggable.accept(zipDestinationField);
+
+        setCursor.accept(fileToZipField);
+        setCursor.accept(zipDestinationField);
+
+        fileToZipField.textProperty().addListener((observableValue, oldVal, newVal) -> {
+
+            if (Files.exists(new File(newVal).toPath())) {
+                setTextFieldBorderTransparent(fileToZipField);
+            } else {
+                setTextFieldBorderRed(fileToZipField);
+            }
+        });
+
+        zipDestinationField.textProperty().addListener((observableValue, oldVal, newVal) -> {
+
+            if (Files.isDirectory(new File(newVal).toPath())) {
+                setTextFieldBorderTransparent(zipDestinationField);
+            } else {
+                setTextFieldBorderRed(zipDestinationField);
+            }
+        });
+
+
+
     }
 
     private void loadBackGroundImage() {
 
-        Image image = new ImageRetriever().getImage();
+        Image image = new ImageRetriever().getImageFromQueue();
         BackgroundSize bSize = new BackgroundSize(0, 0,
                                                   false, false, true, false);
 
@@ -122,25 +153,41 @@ public class MainViewController implements Initializable {
 
 
     public void zipButtonClick() {
-
-        //TODO Handle error if file is unzippable
-
+        /*
+        TODO Handle error if file is unzippable... CLEAN UP IMPLEMENTED LOGIC, TOO COUPLED AND ALL
+         OVER THE PLACE
+        */
         File fileToZip = new File(fileToZipField.getText());
         File zipFileDestination = new File(zipDestinationField.getText());
+
+
         if (Files.exists(fileToZip.toPath()) && Files.isDirectory(zipFileDestination.toPath())) {
 
             if (zipMode) {
                 FileZipperAPI.zipSingleFileToDestination(fileToZip, zipFileDestination);
-            }
-            try {
-                InputStream inputStream = fileToZip.toURI().toURL().openStream();
-                FileZipperAPI.unZipFilesToDestination(inputStream, zipFileDestination);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } else {
+
+                //fileToZip must be zipFile
+                if (fileToZip.toString().endsWith(".zip")) {
+                    try {
+                        InputStream unzipStream = fileToZip.toURI().toURL().openStream();
+                        FileZipperAPI.unZipFilesToDestination(unzipStream, zipFileDestination);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    setTextFieldBorderTransparent(fileToZipField);
+                } else {
+                    setTextFieldBorderRed(fileToZipField);
+                }
             }
         }
+    }
+    private void setTextFieldBorderRed(TextField textField){
+        textField.setStyle("-fx-border-color: #ff0000");
+    }
 
-
+    private void setTextFieldBorderTransparent(TextField textField) {
+        textField.setStyle("-fx-border-color: transparent");
     }
 
     public void FloofClick() {
@@ -151,6 +198,7 @@ public class MainViewController implements Initializable {
         if (zipMode) {
             zipButton.setText(unzip);
         } else {
+            String zip = "Zip";
             zipButton.setText(zip);
         }
         zipMode = !zipMode;

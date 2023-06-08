@@ -8,12 +8,12 @@
 
 <BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.foofinc.floofyzip.MainViewController">
    <center>
-      <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
          <children>
             <HBox alignment="CENTER" layoutX="10.0" layoutY="125.0" prefWidth="200.0" spacing="20.0">
                <children>
-                  <Button mnemonicParsing="false" text="Mode" fx:id="zipModeButton" onAction="#changeZipMode"/>
-                  <Button mnemonicParsing="false" text="Floof" fx:id="floofButton" onAction="#FloofClick"/>
+                  <Button fx:id="zipModeButton" mnemonicParsing="false" onAction="#changeZipMode" text="Mode" />
+                  <Button fx:id="floofButton" mnemonicParsing="false" onAction="#FloofClick" text="Floof" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefWidth="200.0" spacing="20.0">
