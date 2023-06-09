@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
@@ -32,18 +33,26 @@ public class MainViewController implements Initializable {
     public Button chooseDestinationButton;
     public Button chooseFileButton;
     public Button zipButton;
-    public Button zipModeButton;
-    public Button floofButton;
+
+    public MenuItem moreFloofMenuItem;
+    public MenuItem lessFloofMenuItem;
+
+    public MenuItem zipModeMenuItem;
+    public MenuItem unzipModeMenuItem;
+
 
     private boolean zipMode = true;
-    private String unzip = "Unzip";
+    private final String unzip = "Unzip";
+    private final String zip = "Zip";
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         loadBackGroundImage();
         setButtonsAndTextFields();
         setTextFieldListeners();
+        lessFloofClick();
+        setToZipMode();
     }
 
     private void setButtonsAndTextFields() {
@@ -51,8 +60,7 @@ public class MainViewController implements Initializable {
         final int buttonWidth = 80;
         final int textFieldWidth = 200;
 
-        Button[] buttons = {chooseFileButton, chooseDestinationButton,
-                zipButton, zipModeButton, floofButton};
+        Button[] buttons = {chooseFileButton, chooseDestinationButton, zipButton};
         TextField[] textFields = {fileToZipField, zipDestinationField};
         for (Button button : buttons) {
             button.setPrefWidth(buttonWidth);
@@ -114,7 +122,6 @@ public class MainViewController implements Initializable {
                 setTextFieldBorderRed(zipDestinationField);
             }
         });
-
 
 
     }
@@ -182,7 +189,8 @@ public class MainViewController implements Initializable {
             }
         }
     }
-    private void setTextFieldBorderRed(TextField textField){
+
+    private void setTextFieldBorderRed(TextField textField) {
         textField.setStyle("-fx-border-color: #ff0000");
     }
 
@@ -194,13 +202,37 @@ public class MainViewController implements Initializable {
         loadBackGroundImage();
     }
 
-    public void changeZipMode() {
-        if (zipMode) {
-            zipButton.setText(unzip);
-        } else {
-            String zip = "Zip";
-            zipButton.setText(zip);
+    public void setToZipMode() {
+        zipButton.setText(zip);
+        zipMode = true;
+        zipModeMenuItem.setDisable(true);
+        unzipModeMenuItem.setDisable(false);
+    }
+
+    public void setToUnzipMode() {
+        zipMode = false;
+        zipButton.setText(unzip);
+        zipModeMenuItem.setDisable(false);
+        unzipModeMenuItem.setDisable(true);
+    }
+
+    public void moreFloofClick() {
+        setVboxChildrenVisibility(false);
+        moreFloofMenuItem.setDisable(true);
+        lessFloofMenuItem.setDisable(false);
+    }
+
+    public void lessFloofClick() {
+        setVboxChildrenVisibility(true);
+        moreFloofMenuItem.setDisable(false);
+        lessFloofMenuItem.setDisable(true);
+    }
+
+    private void setVboxChildrenVisibility(boolean isVisible) {
+        for (Node paneChild : mainPane.getChildren()) {
+            if (paneChild instanceof VBox) {
+                paneChild.setVisible(isVisible);
+            }
         }
-        zipMode = !zipMode;
     }
 }
