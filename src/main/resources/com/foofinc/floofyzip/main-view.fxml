@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.foofinc.floofyzip.MainViewController">
+<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.foofinc.floofyzip.controller.MainViewController">
     <top>
         <HBox maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
@@ -19,7 +19,7 @@
         </HBox>
     </top>
     <center>
-        <VBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
+        <VBox fx:id="zipFieldsVbox" alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
             <children>
                 <HBox alignment="CENTER" prefWidth="200.0" spacing="20.0">
                     <children>

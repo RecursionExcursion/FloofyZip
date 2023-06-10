@@ -1,4 +1,4 @@
-package com.foofinc.floofyzip;
+package com.foofinc.floofyzip.util;
 
 import javafx.scene.image.Image;
 

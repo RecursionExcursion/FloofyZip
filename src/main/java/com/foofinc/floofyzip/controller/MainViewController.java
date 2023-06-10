@@ -1,10 +1,15 @@
-package com.foofinc.floofyzip;
+package com.foofinc.floofyzip.controller;
 
-import com.foofinc.floofyzip.file_zipping.FileZipperAPI;
+import com.foofinc.floofyzip.tasks.UnzipTaskService;
+import com.foofinc.floofyzip.tasks.ZipTaskService;
+import com.foofinc.floofyzip.util.ImageRetriever;
+import javafx.concurrent.Service;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
@@ -28,6 +33,8 @@ public class MainViewController implements Initializable {
     public TextField zipDestinationField;
 
     public BorderPane mainPane;
+    public VBox zipFieldsVbox;
+
 
     public Button chooseDestinationButton;
     public Button chooseFileButton;
@@ -44,6 +51,9 @@ public class MainViewController implements Initializable {
     private boolean zipMode = true;
     private final String unzip = "Unzip";
     private final String zip = "Zip";
+
+//    private Button cancelButton;
+//    private Service<Void> runningService;
 
 
     @Override
@@ -130,7 +140,6 @@ public class MainViewController implements Initializable {
 
     }
 
-
     private void loadBackGroundImage() {
 
         Image image = new ImageRetriever().getImageFromQueue();
@@ -163,11 +172,10 @@ public class MainViewController implements Initializable {
         return eventNode.getScene().getWindow();
     }
 
-
     public void zipButtonClick() {
         /*
         TODO Handle error if file is unzippable... CLEAN UP IMPLEMENTED LOGIC, TOO COUPLED AND ALL
-         OVER THE PLACE
+         OVER THE PLACE.  RED outline stays after changing zip mode
         */
         File fileToZip = new File(fileToZipField.getText());
         File zipFileDestination = new File(zipDestinationField.getText());
@@ -176,23 +184,80 @@ public class MainViewController implements Initializable {
         if (Files.exists(fileToZip.toPath()) && Files.isDirectory(zipFileDestination.toPath())) {
 
             if (zipMode) {
-                FileZipperAPI.zipSingleFileToDestination(fileToZip, zipFileDestination);
+                //TODO ZipTask Goes here
+                ZipTaskService zipTaskService = new ZipTaskService(fileToZip, zipFileDestination);
+                executeTaskWithProgressbar(zipTaskService);
             } else {
 
                 //fileToZip must be zipFile
                 if (fileToZip.toString().endsWith(".zip")) {
+                    InputStream unzipStream;
+                    //TODO dilike try/
+                    // catch here
                     try {
-                        InputStream unzipStream = fileToZip.toURI().toURL().openStream();
-                        FileZipperAPI.unZipFilesToDestination(unzipStream, zipFileDestination);
+                        unzipStream = fileToZip.toURI().toURL().openStream();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
+                    UnzipTaskService zipTaskService = new UnzipTaskService(unzipStream, zipFileDestination);
+                    executeTaskWithProgressbar(zipTaskService);
                     setTextFieldBorderTransparent(fileToZipField);
                 } else {
                     setTextFieldBorderRed(fileToZipField);
                 }
             }
         }
+    }
+
+    private void executeTaskWithProgressbar(Service<Void> service) {
+
+//        runningService = service;
+//        PopUpCreator popUpCreator = new PopUpCreator();
+//
+//        Stage progressBarPopUpStage = popUpCreator.getStage();
+//        ProgressBar zipProgressBar = popUpCreator.getController().getZipProgressBar();
+
+        VBox progressBarVbox = createProgressBarVbox();
+
+        ProgressBar progressBar = null;
+        Button cancelButton = null;
+        for (Node child : progressBarVbox.getChildren()) {
+            if (child instanceof ProgressBar) {
+                progressBar = (ProgressBar) child;
+            }
+            if (child instanceof Button) {
+                cancelButton = (Button) child;
+            }
+        }
+
+        assert cancelButton != null;
+        cancelButton.setOnAction(event -> {
+            if (service != null && service.isRunning()) {
+                service.cancel();
+            }
+        });
+
+        service.setOnScheduled(e -> mainPane.setCenter(progressBarVbox));
+        service.setOnSucceeded(e -> mainPane.setCenter(zipFieldsVbox));
+        service.setOnCancelled(e -> mainPane.setCenter(zipFieldsVbox));
+
+        assert progressBar != null;
+        progressBar.progressProperty().bind(service.progressProperty());
+
+        service.restart();
+    }
+
+    private VBox createProgressBarVbox() {
+
+        ProgressBar progressBar = new ProgressBar();
+        progressBar.setPrefWidth(200);
+        Button cancelButton = new Button("Cancel");
+
+        VBox PBvBox = new VBox(progressBar, cancelButton);
+        PBvBox.setSpacing(10);
+        PBvBox.setAlignment(Pos.CENTER);
+
+        return PBvBox;
     }
 
     private void setTextFieldBorderRed(TextField textField) {
