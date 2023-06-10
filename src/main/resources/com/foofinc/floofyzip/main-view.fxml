@@ -1,53 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.foofinc.floofyzip.MainViewController">
+<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.foofinc.floofyzip.MainViewController">
     <top>
-        <MenuBar BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="Mode">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="Zip File" onAction="#setToZipMode" fx:id="zipModeMenuItem"/>
-                        <MenuItem mnemonicParsing="false" text="Unzip File" onAction="#setToUnzipMode" fx:id="unzipModeMenuItem"/>
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Floof">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="New Floof" onAction="#FloofClick"/>
-                        <MenuItem mnemonicParsing="false" text="More Floof" onAction="#moreFloofClick" fx:id="moreFloofMenuItem"/>
-                        <MenuItem mnemonicParsing="false" text="Less Floof" onAction="#lessFloofClick" fx:id="lessFloofMenuItem"/>
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
+        <HBox maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="zipModeButton" mnemonicParsing="false" onAction="#setToZipMode" text="Zip" />
+                <Button fx:id="unzipModeButton" mnemonicParsing="false" onAction="#setToUnzipMode" text="UpZip" />
+                <Button fx:id="floofButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Floof" />
+                <Button fx:id="moreFloofButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#moreFloofClick" text="More Floof" />
+                <Button fx:id="lessFloofButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#lessFloofClick" text="Less Floof" />
+            </children>
+        </HBox>
     </top>
     <center>
         <VBox alignment="CENTER" spacing="50.0" BorderPane.alignment="CENTER">
             <children>
                 <HBox alignment="CENTER" prefWidth="200.0" spacing="20.0">
                     <children>
-                        <TextField fx:id="fileToZipField"/>
-                        <Button fx:id="chooseFileButton" mnemonicParsing="false" onAction="#chooseFileToZipButtonClick"
-                                text="File"/>
+                        <TextField fx:id="fileToZipField" />
+                        <Button fx:id="chooseFileButton" mnemonicParsing="false" onAction="#chooseFileToZipButtonClick" text="File" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="200.0" spacing="20.0">
                     <children>
-                        <TextField fx:id="zipDestinationField"/>
-                        <Button fx:id="chooseDestinationButton" mnemonicParsing="false"
-                                onAction="#chooseZipDestinationButtonClick" text="Destination"/>
+                        <TextField fx:id="zipDestinationField" />
+                        <Button fx:id="chooseDestinationButton" mnemonicParsing="false" onAction="#chooseZipDestinationButtonClick" text="Destination" />
                     </children>
                 </HBox>
-                <Button fx:id="zipButton" mnemonicParsing="false" onAction="#zipButtonClick" text="Zip"/>
+                <Button fx:id="zipButton" mnemonicParsing="false" onAction="#zipButtonClick" text="Zip" />
             </children>
         </VBox>
     </center>

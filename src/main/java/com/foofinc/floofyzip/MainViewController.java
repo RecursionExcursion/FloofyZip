@@ -5,7 +5,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
@@ -34,11 +33,12 @@ public class MainViewController implements Initializable {
     public Button chooseFileButton;
     public Button zipButton;
 
-    public MenuItem moreFloofMenuItem;
-    public MenuItem lessFloofMenuItem;
+    public Button moreFloofButton;
+    public Button lessFloofButton;
 
-    public MenuItem zipModeMenuItem;
-    public MenuItem unzipModeMenuItem;
+    public Button zipModeButton;
+    public Button unzipModeButton;
+    public Button floofButton;
 
 
     private boolean zipMode = true;
@@ -49,18 +49,21 @@ public class MainViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadBackGroundImage();
-        setButtonsAndTextFields();
-        setTextFieldListeners();
+        setUpButtonsAndTextFields();
         lessFloofClick();
         setToZipMode();
     }
 
-    private void setButtonsAndTextFields() {
+    private void setUpButtonsAndTextFields() {
 
         final int buttonWidth = 80;
         final int textFieldWidth = 200;
 
-        Button[] buttons = {chooseFileButton, chooseDestinationButton, zipButton};
+        floofButton.setOnAction(event -> loadBackGroundImage());
+
+        Button[] buttons = {chooseFileButton, chooseDestinationButton, zipButton,
+                moreFloofButton, lessFloofButton, zipModeButton, unzipModeButton, floofButton};
+
         TextField[] textFields = {fileToZipField, zipDestinationField};
         for (Button button : buttons) {
             button.setPrefWidth(buttonWidth);
@@ -68,9 +71,10 @@ public class MainViewController implements Initializable {
         for (TextField textField : textFields) {
             textField.setPrefWidth(textFieldWidth);
         }
+        setUpTextFieldListeners();
     }
 
-    private void setTextFieldListeners() {
+    private void setUpTextFieldListeners() {
 
         Consumer<TextField> setCursor = field -> {
             field.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -125,6 +129,7 @@ public class MainViewController implements Initializable {
 
 
     }
+
 
     private void loadBackGroundImage() {
 
@@ -198,34 +203,30 @@ public class MainViewController implements Initializable {
         textField.setStyle("-fx-border-color: transparent");
     }
 
-    public void FloofClick() {
-        loadBackGroundImage();
-    }
-
     public void setToZipMode() {
         zipButton.setText(zip);
         zipMode = true;
-        zipModeMenuItem.setDisable(true);
-        unzipModeMenuItem.setDisable(false);
+        zipModeButton.setDisable(true);
+        unzipModeButton.setDisable(false);
     }
 
     public void setToUnzipMode() {
         zipMode = false;
         zipButton.setText(unzip);
-        zipModeMenuItem.setDisable(false);
-        unzipModeMenuItem.setDisable(true);
+        zipModeButton.setDisable(false);
+        unzipModeButton.setDisable(true);
     }
 
     public void moreFloofClick() {
         setVboxChildrenVisibility(false);
-        moreFloofMenuItem.setDisable(true);
-        lessFloofMenuItem.setDisable(false);
+        moreFloofButton.setDisable(true);
+        lessFloofButton.setDisable(false);
     }
 
     public void lessFloofClick() {
         setVboxChildrenVisibility(true);
-        moreFloofMenuItem.setDisable(false);
-        lessFloofMenuItem.setDisable(true);
+        moreFloofButton.setDisable(false);
+        lessFloofButton.setDisable(true);
     }
 
     private void setVboxChildrenVisibility(boolean isVisible) {
