@@ -192,8 +192,7 @@ public class MainViewController implements Initializable {
                 //fileToZip must be zipFile
                 if (fileToZip.toString().endsWith(".zip")) {
                     InputStream unzipStream;
-                    //TODO dilike try/
-                    // catch here
+                    //TODO dislike try/catch here
                     try {
                         unzipStream = fileToZip.toURI().toURL().openStream();
                     } catch (IOException e) {
